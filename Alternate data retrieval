@@ -1,0 +1,9 @@
+#we open a connection to database
+            cursor = connection.cursor()
+            #Fetching encrypted password based on received username from form submitted through LOGIN form
+            cursor.execute('''SELECT password FROM user_user WHERE username = %s''',[username])
+            #we fetch cursor data
+            row=cursor.fetchone()
+            #we have to refine password from b'' and then we again encode it to utf-8 format
+            refined=row[0][2:-1]
+            #we pass refined encrypted password from database and password from form as parameters to checkpwd()
