@@ -5,13 +5,12 @@ from book.models import Book
 class User(models.Model):
     username = models.CharField(max_length=30, unique=True)
     fname = models.CharField(max_length = 30)
-    lname = models.CharField(max_length = 30,default='NULL')    
-    dob = models.DateField()
+    lname = models.CharField(max_length = 30,default='NULL')
     password = models.CharField(max_length = 60)
     books = models.ManyToManyField(Book, through='Read')    
     
     def __str__(self):
-        return self.name
+        return self.fname
 
     
 class Read(models.Model):

@@ -1,0 +1,18 @@
+{% extends "user/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+	{% for book in books %}
+		<article class="media content-section">
+			<div class="media-body">
+				<div class="article-metadata">
+					<a class="mr-2" href="#">{{ book.author }}</a>
+					<small class="text-muted">{{ book.release_date }}</small>
+				</div>
+				<h2><a class="article-title" href="#">{{ book.name }}</a></h2>
+			</div>
+		</article>
+	{% endfor %}
+
+{% endblock content %}

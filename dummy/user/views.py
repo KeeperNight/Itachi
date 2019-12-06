@@ -4,11 +4,11 @@ from user.forms import LoginForm
 from user.forms import SignupForm
 from django.contrib import messages
 import bcrypt
-from user.models import User
+from .models import User
+from django.db import connection
 
 
 def user_home(request):
-
     return render(request,'user/home.html')
 
 def user_login(request):
@@ -16,9 +16,10 @@ def user_login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password').encode("utf-8")
-            u=User.objects.get(username=username)
-            if bcrypt.checkpw(password,u.password):
+            password = form.cleaned_data.get('password')
+            user=User.objects.get(username=username)
+            refined_password=user.password[2:-1]
+            if bcrypt.checkpw(password.encode("utf-8"),refined_password.encode("utf-8")):
                 return redirect('user_home')
                 messages.success(request,f'Login Successful !')
             else:
@@ -36,13 +37,16 @@ def user_signup(request):
             lname = form.cleaned_data.get('lname')
             password = form.cleaned_data.get('password').encode("utf-8")
             conf_password = form.cleaned_data.get('confirm_password').encode("utf-8")
+            #checking if two passwords from form are matching or not
             if password == conf_password:
+                #checking if any user exists with same username
                 if User.objects.filter(username=username).exists():
                     messages.info(request,f'Username exists')
                     return redirect('user_signup')
+                #else we go with hashing password
                 else:
-                    hashed_password = bcrypt.hashpw(password,bcrypt.gensalt(14))
-                    print(hashed_password)
+                    #Password Hashing
+                    hashed_password = bcrypt.hashpw(password,bcrypt.gensalt())
                     #create user with create and assigning form values to model
                     u=User.objects.create(username=username,fname=fname,lname=lname,password=hashed_password)
                     #saving the data to database and committing it
